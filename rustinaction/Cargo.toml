@@ -1,0 +1,13 @@
+[package]
+name = "rustinaction"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[example]]
+name = "type_system1"
+path = "examples/type_system1.rs"
+
+[dependencies]
+serde = "1.0"
