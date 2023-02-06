@@ -1,7 +1,6 @@
-
 use std::error::Error;
 
-use crate::calendar::{event::EventSummary};
+use super::event::EventSummary;
 
 pub trait Notifier {
     fn notify(&self, summ: &EventSummary) -> Result<(), Box<dyn Error>>;
@@ -13,7 +12,7 @@ impl Notifier for Slack {
         summ.show();
         Ok(())
     }
- }
+}
 
 pub struct Sms;
 impl Notifier for Sms {
@@ -21,10 +20,10 @@ impl Notifier for Sms {
         summ.show();
         Ok(())
     }
- }
+}
 
 pub struct Discord;
-impl Notifier for Discord { 
+impl Notifier for Discord {
     fn notify(&self, summ: &EventSummary) -> Result<(), Box<dyn Error>> {
         summ.show();
         Ok(())
