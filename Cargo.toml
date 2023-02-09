@@ -9,5 +9,6 @@ edition = "2021"
 
 members = [
     "rustinaction",
-    "actionkv"
+    "actionkv",
+    "token_price",
 ]
