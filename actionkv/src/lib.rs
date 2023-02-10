@@ -1,3 +1,5 @@
+mod akv_mem;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
