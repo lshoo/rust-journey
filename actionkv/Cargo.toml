@@ -19,3 +19,6 @@ path = "src/lib.rs"
 name = "akv_mem"
 path = "src/akv_mem.rs"
 
+[[bin]]
+name = "write123"
+path = "src/write123.rs"
