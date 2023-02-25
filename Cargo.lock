@@ -6,6 +6,7 @@ version = 3
 name = "actionkv"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "byteorder",
  "crc",
  "serde",
