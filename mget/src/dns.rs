@@ -1,12 +1,15 @@
-use std::{error::Error, net::{SocketAddr, UdpSocket}};
+use std::{
+    error::Error,
+    net::{SocketAddr, UdpSocket},
+};
 
 use std::time::Duration;
 use trust_dns::{
-    proto::error::ProtoError, rr::{Name, RecordType}, 
-    op::{Message, Query, OpCode, MessageType}, 
-    serialize::binary::{BinEncoder, BinEncodable},
+    op::{Message, MessageType, OpCode, Query},
+    proto::error::ProtoError,
+    rr::{Name, RecordType},
+    serialize::binary::{BinEncodable, BinEncoder},
 };
-
 
 fn message_id() -> u16 {
     let candidate = rand::random();
@@ -17,7 +20,7 @@ fn message_id() -> u16 {
     candidate
 }
 
-#[derive(Debug)] 
+#[derive(Debug)]
 pub enum DnsError {
     ParseDomainName(ProtoError),
     ParseDnsServerAddress(std::net::AddrParseError),
@@ -40,8 +43,7 @@ pub fn resolve(
     dns_server_address: &str,
     domain_name: &str,
 ) -> Result<Option<std::net::IpAddr>, Box<dyn Error>> {
-    let domain_name = Name::from_ascii(domain_name)
-        .map_err(DnsError::ParseDomainName)?;
+    let domain_name = Name::from_ascii(domain_name).map_err(DnsError::ParseDomainName)?;
 
     let dns_server_address = format!("{dns_server_address}:53");
     let dns_server: SocketAddr = dns_server_address
@@ -49,11 +51,9 @@ pub fn resolve(
         .map_err(DnsError::ParseDnsServerAddress)?;
 
     let mut request_buffer: Vec<u8> = Vec::with_capacity(64);
-    let mut response_buffer: Vec<u8> = vec![0; 512];    // Dns 使用UDP传输，它的最大数据包大小是512字节
+    let mut response_buffer: Vec<u8> = vec![0; 512]; // Dns 使用UDP传输，它的最大数据包大小是512字节
     let mut request = Message::new();
-    request.add_query(
-        Query::query(domain_name, trust_dns::rr::RecordType::A)
-    );
+    request.add_query(Query::query(domain_name, trust_dns::rr::RecordType::A));
 
     request
         .set_id(message_id())
@@ -78,9 +78,12 @@ pub fn resolve(
         .send_to(&request_buffer, dns_server)
         .map_err(DnsError::Sending)?;
 
-    loop {  // 忽略不是期望端口的数据包
-        let (_b_bytes_recv, remote_port) = localhost.recv_from(&mut response_buffer).map_err(DnsError::Receiving)?;
-        
+    loop {
+        // 忽略不是期望端口的数据包
+        let (_b_bytes_recv, remote_port) = localhost
+            .recv_from(&mut response_buffer)
+            .map_err(DnsError::Receiving)?;
+
         if remote_port == dns_server {
             break;
         }
@@ -89,12 +92,12 @@ pub fn resolve(
     let response = Message::from_vec(&response_buffer).map_err(DnsError::Decoding)?;
 
     for answer in response.answers() {
-        if answer .record_type() == RecordType::A {
+        if answer.record_type() == RecordType::A {
             let resource = answer.rdata();
             let server_ip = resource.to_ip_addr().expect("Invalid IP address received!");
             return Ok(Some(server_ip));
         }
     }
-    
+
     Ok(None)
 }

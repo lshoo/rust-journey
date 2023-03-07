@@ -3,10 +3,8 @@ use std::fmt::Display;
 use rand::RngCore;
 use smoltcp::wire;
 
-
-
 #[derive(Debug)]
-pub struct MacAddress([u8;6]);
+pub struct MacAddress([u8; 6]);
 
 impl Display for MacAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

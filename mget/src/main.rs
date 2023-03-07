@@ -25,16 +25,14 @@ fn main() {
     }
 
     let tap = TapInterface::new(&tap_text)
-    .expect("error: unable to use <tap-device> as a network interface");
+        .expect("error: unable to use <tap-device> as a network interface");
     let domain_name = url.host_str().expect("domain name required");
-    let _dns_server: std::net::Ipv4Addr = dns_server_text.parse()
+    let _dns_server: std::net::Ipv4Addr = dns_server_text
+        .parse()
         .expect("Error: unable to parse <dns-server> as an IPV4 address");
-    let addr = dns::resolve(dns_server_text, domain_name)
-        .unwrap()
-        .unwrap();
+    let addr = dns::resolve(dns_server_text, domain_name).unwrap().unwrap();
 
     let mac = ethernet::MacAddress::new().into();
 
     http::get(tap, mac, addr, url).unwrap();
-
 }

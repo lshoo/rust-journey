@@ -1,10 +1,14 @@
-use std::{fmt, net::IpAddr, collections::BTreeMap};
+use std::{collections::BTreeMap, fmt, net::IpAddr};
 
-use std::os::unix::io::AsRawFd;
 use smoltcp::time::Instant;
-use smoltcp::{phy::{wait as phy_wait, TapInterface}, wire::{EthernetAddress, IpCidr, IpAddress, Ipv4Address}, iface::{NeighborCache, Routes, EthernetInterfaceBuilder}, socket::{TcpSocketBuffer, TcpSocket, SocketSet}};
+use smoltcp::{
+    iface::{EthernetInterfaceBuilder, NeighborCache, Routes},
+    phy::{wait as phy_wait, TapInterface},
+    socket::{SocketSet, TcpSocket, TcpSocketBuffer},
+    wire::{EthernetAddress, IpAddress, IpCidr, Ipv4Address},
+};
+use std::os::unix::io::AsRawFd;
 use url::Url;
-
 
 #[derive(Debug)]
 enum HttpState {
@@ -17,7 +21,7 @@ enum HttpState {
 pub enum UpstreamError {
     NetworkError(smoltcp::Error),
     InvalidUrl,
-    ContentError(std::str::Utf8Error)
+    ContentError(std::str::Utf8Error),
 }
 
 impl fmt::Display for UpstreamError {
@@ -25,19 +29,19 @@ impl fmt::Display for UpstreamError {
         write!(f, "{:?}", self)
     }
 }
-  
+
 impl From<smoltcp::Error> for UpstreamError {
     fn from(error: smoltcp::Error) -> Self {
         UpstreamError::NetworkError(error)
     }
 }
-  
+
 impl From<std::str::Utf8Error> for UpstreamError {
     fn from(error: std::str::Utf8Error) -> Self {
         UpstreamError::ContentError(error)
     }
 }
-  
+
 fn random_port() -> u16 {
     49152 + rand::random::<u16>() % 16384
 }
@@ -47,7 +51,7 @@ pub fn get(
     mac: EthernetAddress,
     addr: IpAddr,
     url: Url,
-) -> Result<(), UpstreamError> {  
+) -> Result<(), UpstreamError> {
     let domain_name = url.host_str().ok_or(UpstreamError::InvalidUrl)?;
 
     let neighbor_cache = NeighborCache::new(BTreeMap::new());
@@ -55,7 +59,7 @@ pub fn get(
     let tcp_rx_buffer = TcpSocketBuffer::new(vec![0; 1024]);
     let tcp_tx_buffer = TcpSocketBuffer::new(vec![0; 1024]);
     let tcp_socket = TcpSocket::new(tcp_rx_buffer, tcp_tx_buffer);
-    
+
     let ip_addrs = [IpCidr::new(IpAddress::v4(192, 168, 42, 1), 24)];
 
     let fd = tap.as_raw_fd();
@@ -96,39 +100,36 @@ pub fn get(
 
             state = match state {
                 HttpState::Connect if !socket.is_active() => {
-                eprintln!("connecting");
-                socket.connect((addr, 80), random_port())?;
-                HttpState::Request
+                    eprintln!("connecting");
+                    socket.connect((addr, 80), random_port())?;
+                    HttpState::Request
                 }
 
                 HttpState::Request if socket.may_send() => {
-                eprintln!("sending request");
-                socket.send_slice(http_header.as_ref())?;
-                HttpState::Response
+                    eprintln!("sending request");
+                    socket.send_slice(http_header.as_ref())?;
+                    HttpState::Response
                 }
 
                 HttpState::Response if socket.can_recv() => {
-                socket.recv(|raw_data| {
-                    let output = String::from_utf8_lossy(raw_data);
-                    println!("{}", output);
-                    (raw_data.len(), ())
-                })?;
-                HttpState::Response
+                    socket.recv(|raw_data| {
+                        let output = String::from_utf8_lossy(raw_data);
+                        println!("{}", output);
+                        (raw_data.len(), ())
+                    })?;
+                    HttpState::Response
                 }
 
                 HttpState::Response if !socket.may_recv() => {
-                eprintln!("received complete response");
-                break 'http;
+                    eprintln!("received complete response");
+                    break 'http;
                 }
                 _ => state,
             }
         }
 
-        phy_wait(fd, iface.poll_delay(&sockets, timestamp))
-            .expect("wait error");
+        phy_wait(fd, iface.poll_delay(&sockets, timestamp)).expect("wait error");
     }
 
     Ok(())
-   
 }
-
