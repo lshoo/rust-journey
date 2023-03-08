@@ -1,3 +1,4 @@
+
 use std::{
     error::Error,
     net::{SocketAddr, UdpSocket},
@@ -33,7 +34,7 @@ pub enum DnsError {
 
 impl std::fmt::Display for DnsError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:#}", self)
+        write!(f, "{:?}", self)
     }
 }
 
