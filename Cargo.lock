@@ -390,6 +390,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "effective"
+version = "0.1.0"
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
