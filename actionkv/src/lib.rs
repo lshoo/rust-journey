@@ -3,7 +3,7 @@ use std::io::{self, BufReader, BufWriter, Read, Seek, SeekFrom, Write};
 use std::{collections::HashMap, fs::File, path::Path};
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use crc::crc32;
+use crc::Crc;
 use serde_derive::{Deserialize, Serialize};
 
 type ByteString = Vec<u8>;
@@ -125,7 +125,8 @@ impl ActionKV {
 
         debug_assert_eq!(data.len(), data_len as usize);
 
-        let checksum = crc32::checksum_ieee(&data);
+        // let checksum = crc32::checksum_ieee(&data);
+        let checksum = Crc::<u32>::new(&crc::CRC_32_BZIP2).checksum(&data);
 
         if checksum != saved_checksum {
             panic!("data corruption encountered ({checksum:08x} != {saved_checksum:08x}");
@@ -153,7 +154,8 @@ impl ActionKV {
             tmp.push(*byte);
         }
 
-        let checksum = crc32::checksum_ieee(&tmp);
+        // let checksum = crc32::checksum_ieee(&tmp);
+        let checksum = Crc::<u32>::new(&crc::CRC_32_BZIP2).checksum(&tmp);
 
         let next_byte = SeekFrom::End(0);
 

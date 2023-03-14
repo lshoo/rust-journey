@@ -14,3 +14,23 @@ members = [
     "rustinaction",
     "token_price",
 ]
+
+
+
+[workspace.dependencies]
+bincode = "1"
+clap = { version = "4", features = ["derive"] }
+futures = "0.3"
+rand = "0.8"
+reqwest = { version = "0", features = ["json"] }
+serde = {version  = "1", features = ["derive"] }
+serde_cbor = "0.11"
+serde_json = "1"
+serde_derive = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["full"] }
+
+url = "2.3.1"
+
+byteorder = "1.4.3"
+crc = "3"

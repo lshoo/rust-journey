@@ -1,11 +1,14 @@
 use std::time::Duration;
 
 use clap::{command, Parser};
+use futures::{stream, StreamExt};
+use rand::{thread_rng, Rng};
+
 use reqwest::Client;
 use serde_json::Value;
 use thiserror::Error;
 
-pub const COINGECKO_URL: &str = "http://api.coingecko.com/api/v3/simple/price";
+pub const COINGECKO_URL: &str = "https://api.coingecko.com/api/v3/simple/price";
 
 #[derive(Error, Debug)]
 pub enum CoingeckoError {
@@ -61,6 +64,15 @@ struct Args {
 
 #[tokio::main]
 async fn main() {
+    stream::iter(0..200u64)
+        .for_each_concurrent(20, |number| async move {
+            let mut rng = thread_rng();
+            let sleep_ms: u64 = rng.gen_range(0..20);
+            tokio::time::sleep(Duration::from_millis(sleep_ms)).await;
+            println!("{}", number);
+        })
+        .await;
+
     let args = Args::parse();
     let chain = args.chain;
     let currency = args.vs;
