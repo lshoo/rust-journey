@@ -2,7 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RepairOrder<State> {
     pub order_number: u64,
@@ -35,7 +34,9 @@ pub struct New;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Valid;
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Invalid { validation_errors: Vec<String> }
+pub struct Invalid {
+    validation_errors: Vec<String>,
+}
 #[derive(Debug, Deserialize, Serialize)]
 pub struct WorkDone;
 
@@ -46,9 +47,13 @@ pub struct InProgress {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct WaitingFroPayment { invoice: String }
+pub struct WaitingFroPayment {
+    invoice: String,
+}
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Paid { invoice: String }
+pub struct Paid {
+    invoice: String,
+}
 
 impl<State> RepairOrder<State> {
     fn with_state<NewState>(self, new_state: NewState) -> RepairOrder<NewState> {
@@ -75,7 +80,11 @@ impl RepairOrder<New> {
 }
 
 impl RepairOrder<Valid> {
-    fn start_progress(self, technician: Employee, steps_left: Vec<String>,) -> RepairOrder<InProgress> {
+    fn start_progress(
+        self,
+        technician: Employee,
+        steps_left: Vec<String>,
+    ) -> RepairOrder<InProgress> {
         self.with_state(InProgress {
             steps_left,
             assigned_technician: technician,
@@ -116,17 +125,13 @@ impl RepairOrder<WaitingFroPayment> {
     }
 }
 
-pub fn process_fluent(
-    order: RepairOrder<New>,
-) -> Result<RepairOrder<Paid>, RepairOrder<Invalid>> {
-    Ok(
-        order
-            .validate()?
-            .start_progress(find_idle_technician(), calculate_steps())
-            .work()
-            .send_invoice()
-            .await_payment()
-    )
+pub fn process_fluent(order: RepairOrder<New>) -> Result<RepairOrder<Paid>, RepairOrder<Invalid>> {
+    Ok(order
+        .validate()?
+        .start_progress(find_idle_technician(), calculate_steps())
+        .work()
+        .send_invoice()
+        .await_payment())
 }
 
 fn await_payment() {
