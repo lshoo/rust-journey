@@ -19,5 +19,5 @@ jobs:
     #  with:
     #    fetch-depth: 0
     - name: Install dev environment
-      run: bash ./scripts/dev-setup.sh
+      run: bash ./scripts/dev_setup.sh -b -r
     
