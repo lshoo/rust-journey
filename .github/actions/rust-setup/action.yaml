@@ -23,12 +23,4 @@ runs:
       shell: bash
       run: scripts/dev_setup.sh -b -r
 
-    - run: echo "/home/runner/.cargo/bin" | tee -a $GITHUB_PATH
-      shell: bash
 
-    - name: Setup git credentials
-      if: inputs.GIT_CREDENTIALS != ''
-      shell: bash
-      run: |
-        git config --global credential.helper store
-        echo "${{ inputs.GIT_CREDENTIALS }}" > ~/.git-credentials
