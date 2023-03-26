@@ -1,5 +1,3 @@
-use self::abi::{ImageSpec, Spec};
-
 mod abi;
 
 pub use abi::*;
@@ -42,7 +40,6 @@ impl filter::Filter {
     }
 }
 
-
 impl From<resize::SampleFilter> for SamplingFilter {
     fn from(value: resize::SampleFilter) -> Self {
         match value {
@@ -54,7 +51,6 @@ impl From<resize::SampleFilter> for SamplingFilter {
             resize::SampleFilter::Undefined => SamplingFilter::Nearest,
         }
     }
-    
 }
 
 impl Spec {
