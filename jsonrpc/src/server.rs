@@ -5,7 +5,7 @@ use jsonrpsee::proc_macros::rpc;
 #[rpc(server, client)]
 trait RpcService {
     #[method(name = "echo")]
-    async fn echo(&self, msg: String) -> RpcResult<String>;
+    async fn echo(&self, msg: Vec<u8>) -> RpcResult<String>;
 
     #[method(name = "start")]
     async fn start(&self) -> RpcResult<()>;
@@ -24,10 +24,10 @@ pub struct RoochServer {
 
 #[async_trait]
 impl RpcServiceServer for RoochServer {
-    async fn echo(&self, msg: String) -> RpcResult<String> {
+    async fn echo(&self, msg: Vec<u8>) -> RpcResult<String> {
         println!("before echo, the counter is {}", self.counter);
         // self.counter += 1;
-        Ok(format!("{msg}: {}", self.counter))
+        Ok(format!("{msg:?}: {}", self.counter))
     }
 
     async fn start(&self) -> RpcResult<()> {

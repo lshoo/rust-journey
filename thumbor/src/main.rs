@@ -13,6 +13,7 @@ use reqwest::StatusCode;
 use std::{
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
+    num::NonZeroUsize,
     sync::Arc,
 };
 use tokio::sync::Mutex;
@@ -30,7 +31,7 @@ type Cache = Arc<Mutex<LruCache<u64, Bytes>>>;
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let cache: Cache = Arc::new(Mutex::new(LruCache::new(1024)));
+    let cache: Cache = Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(1024).unwrap())));
 
     let router = Router::new()
         .route("/image/:spec/:url", get(generate))
