@@ -1,4 +1,3 @@
-
 pub fn verbose() {
     let name = "USER";
     match std::env::var(name) {

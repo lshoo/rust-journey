@@ -32,5 +32,4 @@ fn main() {
     let key = "GOROOT";
     std::env::set_var(key, "goroot");
     println!("{}", std::env::var(key).unwrap());
-    
 }
