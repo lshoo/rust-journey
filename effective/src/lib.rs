@@ -1,3 +1,5 @@
+pub mod download_file;
+
 pub mod env;
 
 pub mod get_files;
