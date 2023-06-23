@@ -10,4 +10,5 @@ anyhow = { workspace = true }
 futures = { workspace = true }
 rand = { workspace = true }
 reqwest = { workspace = true }
+sha2 = { workspace = true }
 tokio = { workspace = true }

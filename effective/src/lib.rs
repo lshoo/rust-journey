@@ -4,6 +4,8 @@ pub mod env;
 
 pub mod get_files;
 
+pub mod hash_file;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
