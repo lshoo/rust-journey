@@ -1,3 +1,5 @@
+pub mod binary_search;
+
 pub mod download_file;
 
 pub mod env;
