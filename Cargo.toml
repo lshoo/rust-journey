@@ -33,6 +33,7 @@ clap = { version = "4", features = ["derive"] }
 coerce = { version = "0.8", features = ["full"] }
 coerce-macros = "0.2"
 crc = "3"
+csv = "1.2"
 futures = "0.3"
 hmac = "0.12"
 hashring = "0.3"
@@ -75,9 +76,6 @@ tracing-subscriber = { features = ["json"], version = "0.3" }
 
 [profile.dev]
 debug = 1
-
-[dependencies]
-sha2.workspace = true
 
 
 
