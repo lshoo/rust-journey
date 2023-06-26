@@ -10,6 +10,8 @@ pub mod hash_file;
 
 pub mod read_csv;
 
+pub mod tcp_server;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
