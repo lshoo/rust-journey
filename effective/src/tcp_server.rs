@@ -12,6 +12,16 @@ pub fn handle(mut stream: TcpStream) {
             Err(_) => return,
         };
 
+        let msg = String::from_utf8_lossy(&buffer[..bytes_read]);
+        print!("received:{}.", msg);
+
+        let cmd = msg.lines().next().map(|s| s.to_lowercase());
+        if cmd == Some("q".to_owned()) || cmd == Some("quit".to_owned()) {
+            return;
+        }
+
+        println!("sending:{}", msg);
+
         // Echo the data back to the client
         if stream.write(&buffer[..bytes_read]).is_err() {
             return; // Error writing to stream
