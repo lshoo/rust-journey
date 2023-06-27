@@ -9,6 +9,7 @@ edition = "2021"
 anyhow = { workspace = true }
 csv = { workspace = true }
 futures = { workspace = true }
+image = { workspace = true }
 rand = { workspace = true }
 reqwest = { workspace = true }
 sha2 = { workspace = true }
