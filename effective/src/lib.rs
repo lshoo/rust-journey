@@ -4,6 +4,8 @@ pub mod download_file;
 
 pub mod env;
 
+pub mod enum_str;
+
 pub mod get_files;
 
 pub mod hash_file;
