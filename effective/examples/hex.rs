@@ -1,4 +1,3 @@
-
 fn main() {
     use hex_literal::hex;
 
@@ -12,10 +11,12 @@ fn main() {
     assert_eq!(hex!("0a0B 0C0d"), [10, 11, 12, 13]);
 
     // Multi-line literals
-    let bytes1 = hex!("
+    let bytes1 = hex!(
+        "
         00010203 04050607
         08090a0b 0c0d0e0f
-    ");
+    "
+    );
     assert_eq!(
         bytes1,
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],

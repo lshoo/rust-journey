@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Period {
@@ -6,7 +6,6 @@ pub enum Period {
     Day,
     Week,
 }
-
 
 fn main() {
     let p1: Period = serde_json::from_str("Hour").unwrap();
