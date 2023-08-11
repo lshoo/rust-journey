@@ -2,5 +2,6 @@ use atomics::chapter02::*;
 
 fn main() {
     // atomics();
-    process_report();
+    // process_report();
+    fetch_update();
 }
