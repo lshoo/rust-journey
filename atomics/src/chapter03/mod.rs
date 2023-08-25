@@ -1,3 +1,4 @@
+pub mod acqrel;
 pub mod fence;
 
 use std::{
