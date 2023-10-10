@@ -15,6 +15,8 @@ pub mod read_csv;
 
 pub mod read_image_dimension;
 
+pub mod log;
+
 pub mod tcp_server;
 
 pub fn add(left: usize, right: usize) -> usize {
