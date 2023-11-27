@@ -1,3 +1,6 @@
+
+pub mod condvar;
+
 use std::{sync::atomic::{AtomicU32, Ordering}, cell::UnsafeCell, ops::{Deref, DerefMut}};
 
 use atomic_wait::{wait, wake_one};

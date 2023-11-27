@@ -13,6 +13,7 @@ members = [
     "concurrencies",
     "effective",
     "jsonrpc",
+    "macrox",
     "mget",
     "rustinaction",
     "thumbor",
