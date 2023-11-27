@@ -4,9 +4,14 @@ mod json_schema;
 
 use proc_macro::TokenStream;
 
+use crate::json_schema::{get_string_literal, StructeTemplate};
+
 #[proc_macro]
 pub fn generate(input: TokenStream) -> TokenStream {
-    println!("{:#?}", input);
+    let filename = get_string_literal(input).unwrap();
+    println!("{:#?}", filename);
 
-    TokenStream::default()
+    let result = StructeTemplate::render(&filename).unwrap();
+
+    result.parse().unwrap()
 }
