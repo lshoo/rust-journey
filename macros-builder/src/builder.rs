@@ -6,7 +6,8 @@ use quote::quote;
 use syn::{
     punctuated::{Iter, Punctuated},
     token::Comma,
-    Data, DataStruct, DeriveInput, Field, Fields, FieldsNamed,
+    Data, DataStruct, DeriveInput, Field, Fields, FieldsNamed, GenericArgument, Path, Type,
+    TypePath,
 };
 
 pub struct BuilderContext {
@@ -76,7 +77,7 @@ impl BuilderContext {
 
     fn gen_optionized_fields(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
-            let ty = &f.ty;
+            let (_, ty) = get_option_inner(&f.ty);
             let name = &f.ident;
             quote! { #name: std::option::Option<#ty> }
         })
@@ -84,7 +85,7 @@ impl BuilderContext {
 
     fn gen_methods(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
-            let ty = &f.ty;
+            let (_, ty) = get_option_inner(&f.ty);
             let name = &f.ident;
             quote! {
                 pub fn #name(mut self, v: impl Into<#ty>) -> Self {
@@ -97,12 +98,52 @@ impl BuilderContext {
 
     fn gen_assigns(&self) -> TokenStreamIter {
         self.fields.iter().map(|f| {
-            // let ty = &f.ty;
+            let (optional, _) = get_option_inner(&f.ty);
             let name = &f.ident;
             // #field_name: self.field_name.take().ok_or("xxx need to be set!")
-            quote! {
-                #name: self.#name.take().ok_or(concat!(stringify!(#name), " need to be set"))?
+            if optional {
+                quote! {
+                    #name: self.#name.take()
+                }
+            } else {
+                quote! {
+                    #name: self.#name.take().ok_or(concat!(stringify!(#name), " need to be set"))?
+                }
             }
         })
     }
 }
+
+fn get_option_inner(ty: &Type) -> (bool, &Type) {
+    if let Type::Path(TypePath {
+        path: Path { segments, .. },
+        ..
+    }) = ty
+    {
+        if let Some(v) = segments.iter().next() {
+            if v.ident == "Option" {
+                let t = match &v.arguments {
+                    syn::PathArguments::AngleBracketed(a) => match a.args.iter().next() {
+                        Some(GenericArgument::Type(t)) => t,
+                        _ => panic!("Not sure what to do with other GenericArgument"),
+                    },
+                    _ => panic!("Not sure what to do with other PathArgument"),
+                };
+
+                return (true, t);
+            }
+        }
+    }
+
+    (false, ty)
+}
+
+// fn is_optional(ty: &Type) -> bool {
+//     if let Type::Path(TypePath { path: Path { segments, ..}, .. }) = ty {
+//         if let Some(v) = segments.iter().next() {
+//             return v.ident == "Option";
+//         }
+//     }
+
+//     false
+// }
