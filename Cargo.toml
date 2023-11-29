@@ -14,6 +14,7 @@ members = [
     "effective",
     "jsonrpc",
     "macrox",
+    "macros-builder",
     "mget",
     "rustinaction",
     "thumbor",
