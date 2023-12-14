@@ -11,6 +11,7 @@ members = [
     "atomics",
     "actionkv",
     "concurrencies",
+    "dioxus-todo",
     "effective",
     "jsonrpc",
     "macrox",
