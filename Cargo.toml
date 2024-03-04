@@ -17,6 +17,7 @@ members = [
     "macrox",
     "macros-builder",
     "mget",
+    "pokedex",
     "rustinaction",
     "thumbor",
     "token_price",
