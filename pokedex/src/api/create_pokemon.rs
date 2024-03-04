@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-use crate::{domain::create_pokemon, repositories::pokemon::Repository};
+use crate::{domain::create_pokemon, error::Error, repositories::pokemon::Repository};
 
 use super::Status;
 
@@ -17,10 +17,18 @@ pub fn serve(req: &rouille::Request, repo: Arc<dyn Repository>) -> rouille::Resp
     };
 
     match create_pokemon::execute(repo, req) {
-        create_pokemon::Response::Ok(number) => rouille::Response::json(&number),
-        create_pokemon::Response::Conflict => rouille::Response::from(Status::Conflict),
-        create_pokemon::Response::Error => rouille::Response::from(Status::InternalServerError),
-        create_pokemon::Response::BadRequest => rouille::Response::from(Status::BadRequest),
+        Ok(create_pokemon::Response {
+            number,
+            name,
+            types,
+        }) => rouille::Response::json(&Response {
+            number,
+            name,
+            types,
+        }),
+        Err(Error::Conflict) => rouille::Response::from(Status::Conflict),
+        Err(Error::Unknown) => rouille::Response::from(Status::InternalServerError),
+        Err(Error::BadRequest) => rouille::Response::from(Status::BadRequest),
     }
 }
 
@@ -29,4 +37,11 @@ struct Request {
     number: u16,
     name: String,
     types: Vec<String>,
+}
+
+#[derive(Serialize)]
+pub struct Response {
+    pub number: u16,
+    pub name: String,
+    pub types: Vec<String>,
 }

@@ -1,8 +1,8 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Pokemon {
     pub number: PokemonNumber,
-    name: PokemonName,
-    types: PokemonTypes,
+    pub name: PokemonName,
+    pub types: PokemonTypes,
 }
 
 impl Pokemon {
@@ -17,6 +17,13 @@ impl Pokemon {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PokemonNumber(u16);
+
+#[cfg(test)]
+impl PokemonNumber {
+    pub fn pikachu() -> Self {
+        Self(42)
+    }
+}
 
 impl TryFrom<u16> for PokemonNumber {
     type Error = ();
@@ -39,6 +46,21 @@ impl From<PokemonNumber> for u16 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PokemonName(String);
 
+#[cfg(test)]
+impl PokemonName {
+    pub fn pikachu() -> Self {
+        Self("pikachu".to_owned())
+    }
+
+    pub fn charmander() -> Self {
+        Self("charmander".to_owned())
+    }
+
+    pub fn empty() -> Self {
+        Self("".to_owned())
+    }
+}
+
 impl TryFrom<String> for PokemonName {
     type Error = ();
 
@@ -48,6 +70,12 @@ impl TryFrom<String> for PokemonName {
         } else {
             Ok(Self(v))
         }
+    }
+}
+
+impl From<PokemonName> for String {
+    fn from(v: PokemonName) -> Self {
+        v.0
     }
 }
 
@@ -62,6 +90,15 @@ impl TryFrom<String> for PokemonType {
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         value.as_str().try_into()
+    }
+}
+
+impl From<PokemonType> for String {
+    fn from(value: PokemonType) -> Self {
+        match value {
+            PokemonType::Electric => "Electric".to_owned(),
+            PokemonType::Fire => "Fire".to_owned(),
+        }
     }
 }
 
@@ -80,6 +117,17 @@ impl TryFrom<&str> for PokemonType {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PokemonTypes(Vec<PokemonType>);
 
+#[cfg(test)]
+impl PokemonTypes {
+    pub fn pikachu() -> Self {
+        Self(vec![PokemonType::Electric])
+    }
+
+    pub fn charmander() -> Self {
+        Self(vec![PokemonType::Fire])
+    }
+}
+
 impl TryFrom<Vec<String>> for PokemonTypes {
     type Error = ();
 
@@ -94,6 +142,12 @@ impl TryFrom<Vec<String>> for PokemonTypes {
                     .collect(),
             ))
         }
+    }
+}
+
+impl From<PokemonTypes> for Vec<String> {
+    fn from(v: PokemonTypes) -> Self {
+        v.0.into_iter().map(|t| t.into()).collect()
     }
 }
 

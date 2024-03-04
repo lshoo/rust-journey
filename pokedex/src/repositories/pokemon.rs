@@ -3,16 +3,20 @@ use std::sync::Mutex;
 use crate::domain::entities::{Pokemon, PokemonName, PokemonNumber, PokemonTypes};
 
 pub trait Repository: Send + Sync {
-    fn insert(&self, number: PokemonNumber, name: PokemonName, types: PokemonTypes)
-        -> InsertResult;
+    fn insert(
+        &self,
+        number: PokemonNumber,
+        name: PokemonName,
+        types: PokemonTypes,
+    ) -> Result<Pokemon, InsertError>;
 }
 
-pub enum InsertResult {
-    Ok(PokemonNumber),
+pub enum InsertError {
     Conflict,
-    Error,
+    Unknown,
 }
 
+#[derive(Default)]
 pub struct InMemoryRepository {
     error: bool,
     pokemons: Mutex<Vec<Pokemon>>,
@@ -24,34 +28,30 @@ impl Repository for InMemoryRepository {
         number: PokemonNumber,
         name: PokemonName,
         types: PokemonTypes,
-    ) -> InsertResult {
+    ) -> Result<Pokemon, InsertError> {
         if self.error {
-            return InsertResult::Error;
+            return Err(InsertError::Unknown);
         }
 
         let mut pokemons = match self.pokemons.lock() {
             Ok(lock) => lock,
-            Err(_) => return InsertResult::Error,
+            Err(_) => return Err(InsertError::Unknown),
         };
 
         if pokemons.iter().any(|p| p.number == number) {
-            return InsertResult::Conflict;
+            return Err(InsertError::Conflict);
         }
 
-        let number_clone = number.clone();
-        let pokemon = Pokemon::new(number_clone, name, types);
-        pokemons.push(pokemon);
+        let pokemon = Pokemon::new(number, name, types);
+        pokemons.push(pokemon.clone());
 
-        InsertResult::Ok(number)
+        Ok(pokemon)
     }
 }
 
 impl InMemoryRepository {
     pub fn new() -> Self {
-        Self {
-            error: false,
-            pokemons: Mutex::new(vec![]),
-        }
+        Default::default()
     }
 
     pub fn with_error(self) -> Self {
