@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Pokemon {
     pub number: PokemonNumber,
     pub name: PokemonName,
@@ -15,13 +15,21 @@ impl Pokemon {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PokemonNumber(u16);
 
 #[cfg(test)]
 impl PokemonNumber {
     pub fn pikachu() -> Self {
         Self(42)
+    }
+
+    pub fn charmander() -> Self {
+        Self(36)
+    }
+
+    pub fn zero() -> Self {
+        Self(0)
     }
 }
 
@@ -43,7 +51,7 @@ impl From<PokemonNumber> for u16 {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PokemonName(String);
 
 #[cfg(test)]
@@ -79,7 +87,7 @@ impl From<PokemonName> for String {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PokemonType {
     Electric,
     Fire,
@@ -114,7 +122,7 @@ impl TryFrom<&str> for PokemonType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PokemonTypes(Vec<PokemonType>);
 
 #[cfg(test)]
