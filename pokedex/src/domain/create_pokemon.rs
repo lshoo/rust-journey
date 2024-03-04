@@ -2,15 +2,15 @@ use crate::repositories::pokemon::{InsertResult, Repository};
 
 use super::entities::{PokemonName, PokemonNumber, PokemonTypes};
 
-use std::convert::TryFrom;
+use std::{convert::TryFrom, sync::Arc};
 
 pub struct Request {
-    number: u16,
-    name: String,
-    types: Vec<String>,
+    pub number: u16,
+    pub name: String,
+    pub types: Vec<String>,
 }
 
-pub fn execute(repo: &mut dyn Repository, req: Request) -> Response {
+pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Response {
     match (
         PokemonNumber::try_from(req.number),
         PokemonName::try_from(req.name),
@@ -40,7 +40,7 @@ mod tests {
 
     #[test]
     fn it_should_return_the_pokemon_number_otherwise() {
-        let mut repo = InMemoryRepository::new();
+        let repo = Arc::new(InMemoryRepository::new());
 
         let number = 42;
         let req = Request {
@@ -49,7 +49,7 @@ mod tests {
             types: vec!["Electric".to_string()],
         };
 
-        let res = execute(&mut repo, req);
+        let res = execute(repo, req);
 
         match res {
             Response::Ok(res_number) => assert_eq!(res_number, number),
@@ -59,14 +59,14 @@ mod tests {
 
     #[test]
     fn it_should_return_a_bad_request_error_when_request_is_invalid() {
-        let mut repo = InMemoryRepository::new();
+        let repo = Arc::new(InMemoryRepository::new());
         let req = Request {
             number: 42,
             name: "".to_string(),
             types: vec!["Electric".to_string()],
         };
 
-        let res = execute(&mut repo, req);
+        let res = execute(repo, req);
 
         match res {
             Response::BadRequest => {}
@@ -80,7 +80,7 @@ mod tests {
         let name = "pikachu".to_string().try_into().unwrap();
         let types = vec!["Electric".to_string()].try_into().unwrap();
 
-        let mut repo = InMemoryRepository::new();
+        let repo = Arc::new(InMemoryRepository::new());
         repo.insert(number, name, types);
 
         let req = Request {
@@ -89,7 +89,7 @@ mod tests {
             types: vec!["Fire".to_string()],
         };
 
-        let res = execute(&mut repo, req);
+        let res = execute(repo, req);
 
         match res {
             Response::Conflict => {}
@@ -103,7 +103,7 @@ mod tests {
         let name = "pikachu".to_string().try_into().unwrap();
         let types = vec!["Electric".to_string()].try_into().unwrap();
 
-        let mut repo = InMemoryRepository::new().with_error();
+        let repo = Arc::new(InMemoryRepository::new().with_error());
         repo.insert(number, name, types);
 
         let req = Request {
@@ -112,7 +112,7 @@ mod tests {
             types: vec!["Electric".to_string()],
         };
 
-        let res = execute(&mut repo, req);
+        let res = execute(repo, req);
 
         match res {
             Response::Error => {}

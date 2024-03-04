@@ -96,3 +96,15 @@ impl TryFrom<Vec<String>> for PokemonTypes {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pokemon_number_should_be_valid() {
+        assert!(PokemonNumber::try_from(42).is_ok());
+        assert!(PokemonNumber::try_from(0).is_err());
+        assert!(PokemonNumber::try_from(1000).is_err());
+    }
+}
