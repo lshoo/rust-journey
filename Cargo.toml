@@ -13,6 +13,7 @@ members = [
     "concurrencies",
     "dioxus-todo",
     "effective",
+    "lunatics",
     "jsonrpc",
     "macrox",
     "macros-builder",
@@ -20,7 +21,7 @@ members = [
     "pokedex",
     "rustinaction",
     "thumbor",
-    "token_price",
+    "token_price", "lunatics",
 ]
 
 

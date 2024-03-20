@@ -1,54 +1,30 @@
 use std::time::Duration;
 
-use lunatic::{
-    ap::{handlers::Request, Config, RequestHandler, State},
-    host::node_id,
-    serializer::MessagePack,
-    sleep, AbstractProcess, Mailbox, Process, ProcessConfig,
-};
+use lunatic::{host::node_id, sleep, AbstractProcess, Mailbox, Process, ProcessConfig};
 
-pub struct Adder;
+use crate::model::Adder;
 
-impl AbstractProcess for Adder {
-    type Arg = ();
-    type State = Self;
-    type Handlers = (Request<(i32, i32)>,);
-    type Serializer = MessagePack;
-    type StartupError = ();
-
-    fn init(_: Config<Self>, _: ()) -> Result<Self, ()> {
-        Ok(Adder)
-    }
-}
-
-impl RequestHandler<(i32, i32)> for Adder {
-    type Response = i32;
-
-    fn handle(_: State<Self>, (a, b): (i32, i32)) -> i32 {
-        let result = a + b;
-        println!("{a} + {b} = {result}");
-
-        result
-    }
-}
-
-pub fn run() {
+pub fn run(node_id: u64) {
     let nodes = lunatic::distributed::nodes();
 
     println!("Nodes {nodes:?}");
+
+    // let nodes = if nodes.is_empty() { vec![node_id] } else { nodes };
 
     let mut config = ProcessConfig::new().unwrap();
     config.set_max_memory(1_500_000);
     config.set_max_fuel(1);
 
-    if !nodes.is_empty() {
-        let add_server = Adder::on_node(nodes[0])
+    let svc = if !nodes.is_empty() {
+        Adder::on_node(node_id)
             .configure(&config)
             .start(())
-            .unwrap();
+            .unwrap()
+    } else {
+        Adder::link().start(()).unwrap()
+    };
 
-        assert_eq!(add_server.request((1, 1)), 2);
-    }
+    assert_eq!(svc.request((1, 1)), 2);
 
     let msgs = [10, 582, 172, 45];
     let procs = nodes

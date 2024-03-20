@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{domain::create_pokemon, error::Error, repositories::pokemon::Repository};
+use crate::{
+    domain::create_pokemon::{self, Error},
+    repositories::pokemon::Repository,
+};
 
 use super::Status;
 

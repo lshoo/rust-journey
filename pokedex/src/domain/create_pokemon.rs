@@ -1,7 +1,4 @@
-use crate::{
-    error::Error,
-    repositories::pokemon::{InsertError, Repository},
-};
+use crate::repositories::pokemon::{InsertError, Repository};
 
 use super::entities::{Pokemon, PokemonName, PokemonNumber, PokemonTypes};
 
@@ -11,6 +8,12 @@ pub struct Request {
     pub number: u16,
     pub name: String,
     pub types: Vec<String>,
+}
+
+pub enum Error {
+    BadRequest,
+    Conflict,
+    Unknown,
 }
 
 pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Error> {
