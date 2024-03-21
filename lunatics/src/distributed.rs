@@ -9,7 +9,17 @@ pub fn run(node_id: u64) {
 
     println!("Nodes {nodes:?}");
 
-    // let nodes = if nodes.is_empty() { vec![node_id] } else { nodes };
+    let entry = |i: i32| {
+        println!("{i}");
+    };
+
+    let nodes = if nodes.is_empty() {
+        let node_id = lunatic::distributed::spawn(node_id, node_id as i64, entry, 0).unwrap();
+        println!("there is no nodes, spawn node {node_id}");
+        vec![node_id]
+    } else {
+        nodes
+    };
 
     let mut config = ProcessConfig::new().unwrap();
     config.set_max_memory(1_500_000);

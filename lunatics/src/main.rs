@@ -9,5 +9,5 @@ fn main(_: Mailbox<()>) {
 
     assert_eq!(lunatics::req_resp::run(svc, (1, 2)), 3);
 
-    lunatics::distributed::run(node_id);
+    lunatics::distributed::run(1);
 }
