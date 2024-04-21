@@ -16,3 +16,13 @@ ractor_cluster = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }
+
+async-task = "4.7.0"
+flume = "0.11.0"
+futures = "0.3.30"
+parking = "2.2.0"
+parking_lot = "0.12.1"
+polling = "3.6.0"
+rustix = "0.38.32"
+slab = "0.4.9"
+waker-fn = "1.1.1"
