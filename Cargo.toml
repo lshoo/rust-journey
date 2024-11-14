@@ -18,10 +18,11 @@ members = [
     "macrox",
     "macros-builder",
     "mget",
+    "qcheck",
     "pokedex",
     "rustinaction",
     "thumbor",
-    "token_price", "lunatics",
+    "token_price", "lunatics", "qcheck",
 ]
 
 

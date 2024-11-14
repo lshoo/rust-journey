@@ -1,0 +1,15 @@
+[package]
+name = "qcheck"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+validator = "0.14"
+
+[dev-dependencies]
+claims = "0.7"
+fake = "2.9"
+quickcheck = "1"
+quickcheck_macros = "1"
+rand = "0.8"
