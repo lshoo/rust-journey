@@ -1,6 +1,10 @@
 pub mod binary_search;
 pub mod builder_pattern;
 
+pub mod dci;
+pub mod dci2;
+pub mod dci_bank;
+
 pub mod download_file;
 
 pub mod env;
